@@ -48,12 +48,12 @@ class UsersController extends Controller
      */
     public function index()
     {
-    
+        return view('user.index');
         
     }
 
-        return view('users.index', compact('users'));
-    }
+        
+    
 
     /**
      * Store a newly created resource in storage.
@@ -65,35 +65,25 @@ class UsersController extends Controller
      * @throws \Prettus\Validator\Exceptions\ValidatorException
      */
     public function store(UserCreateRequest $request)
-    {
-        try {
+    {  
+        $request = $this->service->store($request->all());
+        $usuario = $request['sucess'] ? $request['data']    : null;
 
-            $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_CREATE);
+        session()->flush('sucess',[
+            'sucess'  => $request['sucess'],
+            'message' => $request['message']
 
-            $user = $this->repository->create($request->all());
 
-            $response = [
-                'message' => 'User created.',
-                'data'    => $user->toArray(),
-            ];
+        ]
+    );
 
-            if ($request->wantsJson()) {
+        return view('user.index',[
+            'usuario' => $usuario,
 
-                return response()->json($response);
-            }
+            ]);
 
-            return redirect()->back()->with('message', $response['message']);
-        } catch (ValidatorException $e) {
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'error'   => true,
-                    'message' => $e->getMessageBag()
-                ]);
-            }
-
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
-        }
     }
+
 
     /**
      * Display the specified resource.
