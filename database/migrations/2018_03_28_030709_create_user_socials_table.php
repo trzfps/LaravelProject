@@ -15,7 +15,9 @@ class CreateUserSocialsTable extends Migration
     {
         Schema::create('user_socials', function (Blueprint $table) {
         $table->increments('id');
-        $table->integer('user_id'->unsined();
+
+        
+        $table->integer('user_id')->unsined();
         $table->string('social_network');
         $table->string('social_id');
         $table->string('social_email');
